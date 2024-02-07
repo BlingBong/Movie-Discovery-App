@@ -1,7 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+    kotlin("kapt")
+    id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp") version ("1.6.10-1.0.2")
 }
 
@@ -79,12 +80,11 @@ dependencies {
 
     // Compose Nav Destinations
     implementation("io.github.raamcosta.compose-destinations:core:1.5.2-beta")
-    ksp("io.github.raamcosta.compose-destinations:ksp:1.1.2-beta")
+    ksp("io.github.raamcosta.compose-destinations:ksp:1.5.2-beta")
 
     //Dagger - Hilt
     implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
-    implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    kapt("com.google.dagger:hilt-android-compiler:2.48")
     kapt("androidx.hilt:hilt-compiler:1.1.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
@@ -93,4 +93,29 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.5")
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.5")
+
+    // Coil
+    implementation("io.coil-kt:coil:2.1.0")
+    implementation("io.coil-kt:coil-compose:2.1.0")
+
+    // Logcat
+    implementation("com.squareup.logcat:logcat:0.1")
+
+    // Accompanist-Pager
+    implementation("com.google.accompanist:accompanist-pager:0.13.0")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.13.0")
+
+    // Accompanist-SystemUIController
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.17.0")
+
+    // Accompanist-SwipeRefresh
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.19.0")
+
+    // SplashScreen
+    implementation("androidx.core:core-splashscreen:1.0.1")
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }
