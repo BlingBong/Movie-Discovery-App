@@ -1,8 +1,9 @@
-package com.qifnav.moviediscovery.presentation.genre_listings
+package com.qifnav.moviediscovery.presentation.movie_listings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,50 +11,52 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.qifnav.moviediscovery.R
-import com.qifnav.moviediscovery.presentation.destinations.MovieListingsScreenDestination
+import coil.size.Scale
 import com.qifnav.moviediscovery.presentation.util.UIEvent
 import com.qifnav.moviediscovery.presentation.util.asString
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.flow.collectLatest
 
-
 @Composable
 @Destination
-@RootNavGraph(start = true)
-fun GenreListingsScreen(
+fun MovieListingsScreen(
     navigator: DestinationsNavigator,
-    viewModel: GenreListingsViewModel = hiltViewModel()
+    genreId: Int,
+    viewModel: MovieListingsViewModel = hiltViewModel()
 ) {
+    viewModel.getMovieListings(genreId = genreId)
+
     val state = viewModel.state.value
-    val genres = state.genres
+    val movies = state.movies
 
     val scaffoldState = rememberScaffoldState()
 
@@ -82,7 +85,7 @@ fun GenreListingsScreen(
     Scaffold(scaffoldState = scaffoldState) { padding ->
         Column(modifier = Modifier.fillMaxSize()) {
             Row {
-                if (state.isLoadingGenres) {
+                if (state.isLoadingMovies) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -97,34 +100,84 @@ fun GenreListingsScreen(
                     }
                 }
                 LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                    items(state.genres.size) { i ->
+                    items(state.movies.size) { i ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .padding(
-                                    horizontal = 16.dp,
-                                    vertical = 8.dp
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    bottom = 16.dp
                                 )
                                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
                                 .clip(shape = RoundedCornerShape(20.dp))
                                 .clickable(onClick = {
-                                    navigator.navigate(
-                                        MovieListingsScreenDestination(genreId = genres[i].id)
-                                    )
+                                    // TODO: navigate to movie listings
+//                                            navigator.navigate(
+//                                                MyRewardDetailScreenDestination(claimId = myReward[i].claimId)
+//                                            )
                                 })
                                 .background(MaterialTheme.colors.surface)
                                 .fillMaxWidth()
                         ) {
                             Column(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
+                                    .width(100.dp)
+                                    .height(165.dp)
                             ) {
+                                Box(modifier = Modifier.fillMaxSize()) {
+                                    AsyncImage(
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data(movies[i].posterPath)
+                                            .crossfade(true)
+                                            .scale(Scale.FILL)
+                                            .build(),
+                                        contentDescription = movies[i].title,
+                                        contentScale = ContentScale.FillWidth,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.width(16.dp))
+
+                            Column(modifier = Modifier.fillMaxSize()) {
                                 Text(
-                                    text = genres[i].name,
-                                    style = MaterialTheme.typography.h3,
-                                    fontWeight = FontWeight.Bold
+                                    text = movies[i].title,
+                                    style = MaterialTheme.typography.h6,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colors.primary
                                 )
+
+                                Spacer(modifier = Modifier.height(2.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Start,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.StarRate,
+                                        contentDescription = "User Ratings",
+                                        modifier = Modifier.size(12.dp)
+                                    )
+
+                                    Spacer(modifier = Modifier.width(4.dp))
+
+                                    Text(
+                                        text = movies[i].voteAverage.toString(),
+                                        style = MaterialTheme.typography.caption,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = MaterialTheme.colors.secondary
+                                    )
+
+                                    Spacer(modifier = Modifier.width(2.dp))
+
+                                    Text(
+                                        text = "User Ratings",
+                                        style = MaterialTheme.typography.caption
+                                    )
+                                }
                             }
                         }
                     }
