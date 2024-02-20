@@ -5,6 +5,7 @@ import com.qifnav.moviediscovery.R
 import com.qifnav.moviediscovery.data.api.MovieApi
 import com.qifnav.moviediscovery.domain.model.Genre
 import com.qifnav.moviediscovery.domain.model.Movie
+import com.qifnav.moviediscovery.domain.model.MovieDetail
 import com.qifnav.moviediscovery.domain.model.Review
 import com.qifnav.moviediscovery.domain.model.Video
 import com.qifnav.moviediscovery.domain.repository.MovieDiscoveryRepository
@@ -63,6 +64,35 @@ class MovieDiscoveryRepositoryImpl(
                 }
                 else -> {
                     emit(Resource.Success(response.results.map { it.toMovie() }))
+                }
+            }
+
+        } catch (e: Exception) {
+            logcat { e.asLog() }
+            when (e) {
+                is HttpException -> UIText.StringResource(R.string.em_unknown)
+
+                is IOException -> UIText.StringResource(R.string.em_io_exception)
+
+                else -> UIText.StringResource(R.string.em_unknown)
+
+            }.let { emit(Resource.Error(it)) }
+        }
+    }
+
+    override fun getMovieDetail(movieId: Int): Flow<Resource<MovieDetail>> = flow {
+        emit(Resource.Loading())
+
+        try {
+            val response =
+                movieApi.getMovieDetail(movieId = movieId)
+
+            when (response.title) {
+                null -> {
+                    emit(Resource.Error(UIText.StringResource(R.string.em_unknown)))
+                }
+                else -> {
+                    emit(Resource.Success(response.toMovieDetail()))
                 }
             }
 

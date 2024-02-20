@@ -1,6 +1,7 @@
 package com.qifnav.moviediscovery.data.api
 
 import com.qifnav.moviediscovery.data.model.GenreListDto
+import com.qifnav.moviediscovery.data.model.MovieDetailDto
 import com.qifnav.moviediscovery.data.model.MovieListDto
 import com.qifnav.moviediscovery.data.model.ReviewListDto
 import com.qifnav.moviediscovery.data.model.VideoListDto
@@ -19,6 +20,12 @@ interface MovieApi {
         @Query("with_genres") genreId: Int,
         @Query("api_key") apiKey: String = API_KEY
     ): MovieListDto
+
+    @GET("movie/{movie_id}")
+    suspend fun getMovieDetail(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") apiKey: String = API_KEY
+    ): MovieDetailDto
 
     @GET("movie/{movie_id}/reviews")
     suspend fun getMovieReviews(
