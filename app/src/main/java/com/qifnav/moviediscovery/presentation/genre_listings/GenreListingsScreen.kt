@@ -52,6 +52,9 @@ fun GenreListingsScreen(
     navigator: DestinationsNavigator,
     viewModel: GenreListingsViewModel = hiltViewModel()
 ) {
+
+    viewModel.getGenreListings()
+
     val state = viewModel.state.value
     val genres = state.genres
 

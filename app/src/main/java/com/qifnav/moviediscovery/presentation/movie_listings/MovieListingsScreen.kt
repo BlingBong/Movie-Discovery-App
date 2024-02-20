@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.qifnav.moviediscovery.presentation.destinations.MovieDetailScreenDestination
 import com.qifnav.moviediscovery.presentation.util.UIEvent
 import com.qifnav.moviediscovery.presentation.util.asString
 import com.ramcosta.composedestinations.annotation.Destination
@@ -112,10 +112,9 @@ fun MovieListingsScreen(
                                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
                                 .clip(shape = RoundedCornerShape(20.dp))
                                 .clickable(onClick = {
-                                    // TODO: navigate to movie listings
-//                                            navigator.navigate(
-//                                                MyRewardDetailScreenDestination(claimId = myReward[i].claimId)
-//                                            )
+                                    navigator.navigate(
+                                        MovieDetailScreenDestination(movieId = movies[i].id)
+                                    )
                                 })
                                 .background(MaterialTheme.colors.surface)
                                 .fillMaxWidth()
